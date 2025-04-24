@@ -1,0 +1,213 @@
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 50,
+      "max": 250,
+      "step": 10,
+      "default": 100,
+      "unit": "px",
+      "label": "Logo width"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "default": true,
+      "label": "Show search"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}
+
+<header class="site-header" data-section-id="{{ section.id }}" data-section-type="header">
+  <div class="header-wrapper">
+    <div class="header-content">
+      <div class="header-logo">
+        {%- if section.settings.logo != blank -%}
+          <a href="/" class="header-logo__link">
+            {%- assign logo_alt = section.settings.logo.alt | default: shop.name | escape -%}
+            {{ section.settings.logo | image_url: width: section.settings.logo_width | image_tag:
+              class: "header-logo__image",
+              widths: '50, 100, 150, 200, 250',
+              height: section.settings.logo_width | divided_by: section.settings.logo.aspect_ratio,
+              alt: logo_alt
+            }}
+          </a>
+        {%- else -%}
+          <a href="/" class="header-logo__text">{{ shop.name }}</a>
+        {%- endif -%}
+      </div>
+
+      <nav class="header-nav" role="navigation">
+        {%- if section.settings.menu != blank -%}
+          <ul class="header-nav__list">
+            {%- for link in linklists[section.settings.menu].links -%}
+              <li class="header-nav__item">
+                <a href="{{ link.url }}" class="header-nav__link{% if link.active %} header-nav__link--active{% endif %}">
+                  {{ link.title }}
+                </a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- endif -%}
+      </nav>
+
+      <div class="header-actions">
+        {%- if section.settings.show_search -%}
+          <button type="button" class="header-search-toggle" aria-label="{{ 'general.search.title' | t }}">
+            {% render 'icon-search' %}
+          </button>
+        {%- endif -%}
+        
+        <a href="{{ routes.cart_url }}" class="header-cart">
+          {% render 'icon-cart' %}
+          <span class="header-cart__count">{{ cart.item_count }}</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+.site-header {
+  position: relative;
+  z-index: 20;
+  background: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header-wrapper {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-logo {
+  flex: 0 0 auto;
+}
+
+.header-logo__link {
+  display: block;
+}
+
+.header-logo__image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.header-logo__text {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.header-nav {
+  flex: 1 1 auto;
+  margin: 0 2rem;
+}
+
+.header-nav__list {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.header-nav__item {
+  margin: 0 1rem;
+}
+
+.header-nav__link {
+  text-decoration: none;
+  color: var(--color-text);
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.header-nav__link:hover {
+  color: var(--color-accent);
+}
+
+.header-nav__link--active {
+  color: var(--color-accent);
+}
+
+.header-actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-search-toggle,
+.header-cart {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  color: var(--color-text);
+  transition: color 0.2s ease;
+}
+
+.header-search-toggle:hover,
+.header-cart:hover {
+  color: var(--color-accent);
+}
+
+.header-cart {
+  position: relative;
+  text-decoration: none;
+}
+
+.header-cart__count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: var(--color-accent);
+  color: white;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  min-width: 1.5rem;
+  text-align: center;
+}
+
+@media screen and (max-width: 768px) {
+  .header-nav {
+    display: none;
+  }
+  
+  .header-content {
+    justify-content: space-between;
+  }
+}
+</style> 
