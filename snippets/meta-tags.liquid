@@ -1,0 +1,63 @@
+{%- if canonical_url != blank -%}
+  <link rel="canonical" href="{{ canonical_url }}">
+{%- endif -%}
+
+{%- if settings.favicon != blank -%}
+  <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+{%- endif -%}
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+{%- if page_description -%}
+  <meta name="description" content="{{ page_description | escape }}">
+{%- endif -%}
+
+{%- if template contains 'product' -%}
+  <meta property="og:type" content="product">
+  <meta property="og:title" content="{{ product.title | strip_html | escape }}">
+  {%- for image in product.images limit:3 -%}
+    <meta property="og:image" content="{{ image | image_url }}">
+  {%- endfor -%}
+  <meta property="product:price:amount" content="{{ product.price | money_without_currency | strip_html | escape }}">
+  <meta property="product:price:currency" content="{{ shop.currency }}">
+  <meta property="product:availability" content="{% if product.available %}in stock{% else %}out of stock{% endif %}">
+{%- elsif template contains 'article' -%}
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{{ article.title | strip_html | escape }}">
+  {%- if article.image -%}
+    <meta property="og:image" content="{{ article.image | image_url }}">
+  {%- endif -%}
+{%- else -%}
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ page_title | escape }}">
+  {%- if settings.share_image -%}
+    <meta property="og:image" content="{{ settings.share_image | image_url }}">
+  {%- endif -%}
+{%- endif -%}
+
+<meta property="og:url" content="{{ canonical_url }}">
+<meta property="og:site_name" content="{{ shop.name }}">
+
+{%- if template contains 'product' -%}
+  <meta name="twitter:card" content="product">
+  <meta name="twitter:title" content="{{ product.title | strip_html | escape }}">
+  {%- if product.featured_image -%}
+    <meta name="twitter:image" content="{{ product.featured_image | image_url }}">
+  {%- endif -%}
+  <meta name="twitter:data1" content="{{ shop.currency }} {{ product.price | money_without_currency | strip_html | escape }}">
+  <meta name="twitter:label1" content="Price">
+  <meta name="twitter:data2" content="{% if product.available %}In Stock{% else %}Out of Stock{% endif %}">
+  <meta name="twitter:label2" content="Availability">
+{%- elsif template contains 'article' -%}
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ article.title | strip_html | escape }}">
+  {%- if article.image -%}
+    <meta name="twitter:image" content="{{ article.image | image_url }}">
+  {%- endif -%}
+{%- else -%}
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ page_title | escape }}">
+  {%- if settings.share_image -%}
+    <meta name="twitter:image" content="{{ settings.share_image | image_url }}">
+  {%- endif -%}
+{%- endif -%} 
